@@ -2,55 +2,58 @@
 
 ## Project Info
 
-Freeks produces a report on system usage based on the contents of wtmp and sorted by the actual time different users have spent on the system. The first few lines contain general information about the system.
+*freeks* produces a report on system usage based on the contents of `wtmp` and sorted by the actual time different users have spent on a *Unix* system. The first few lines contain general information about the system.
 
-Originally published in July 1994 on Usenet comp.sources.unix in Volume 28 Issue 83
+Originally published in July 1994 on Usenet **comp.sources.unix** in Volume 28 Issue 83
 
 ## How to use freeks
 
-freeks [ −w /usr/adm/wtmp ] [ −t] [ −c configfile ]
+freeks [ −w wtmp ] [ −t] [ −c configfile ]
 
-The default for wtmp is "/usr/adm/wtmp". You may specify an alternate wtmp file on the command line.
-With the 't' option the user statistics are modified, showing the rank , the name, the time the user was actually logged in and the number of logins. With the c option you can specify a configfile containing the names of alternative 'shutdown' users (cf. TODO), which is probably interesting to SysV machine owners only.
+- The default wtmp path is `/usr/adm/wtmp`.  
+- `-t` shows rank, username, total login time, and number of logins.  
+- `-c` specifies a config file that lists alternative shutdown-user names (mainly relevant for System V).
+
+## Notes / Bugs
+
+Freeks is mostly limited to BSD-style wtmp files (see TODO).  
+It has a few known issues:
+
+- If a reboot entry appears without a preceding shutdown, Freeks assumes a crash and uses the last entry before the reboot as the shutdown time. This may cause minor inaccuracies in uptime and login statistics.
+- Changing the system time in single-user mode is not logged. This can break time accounting. Avoid doing it or delete wtmp afterward.
+- System V uses a different wtmp format, but Freeks may still work if shutdowns are rare or a dedicated shutdown user exists.  
+  - If that user is named `shutdown`, no config file is needed.  
+  - Otherwise, specify their name via the config file (when compiled with `CONFIGFILE` enabled).
+
+## Installation
+
+1. Edit the Makefile to suit your system.
+2. Check whether changes are needed in `freeks.h`.
+
+   If your system has **more** than `HASHTABLESIZE` users, increase `HASHTABLESIZE` (preferably to a prime number).  
+   Otherwise, Freeks will fail with *Hash table full*.
 
 
-## Notes / Bugs 
-
-Freeks is (almost) limited to BSD style wtmp files (cf. TODO below). It does not have a lot of fancy options. Freeks does make some mistakes, e.g. when a reboot entry in wtmp happened without a shutdown before it. If the last entry happened more than a day before the reboot entry, freeks presumes that the machine crashed, and will use the time of the last entry before the crash as time of shutdown. This may lead to marginal errors in 'uptime' and the login times of users still logged in at that time.
-
-Another bug happens when time is changed in single user mode which means it doesn't get logged. Don't do that, or delete the wtmp file afterwards.
-
-System V has changed a lot in wtmp but it should be possible to run the program, if you rarely shut your machine down or have a dedicated 'shutdown' user that logs in when you shut down. If this user is called 'shutdown' you needn't do nothing, if his login name is something else, you can specify that in configfile (if, of course, freeks had been compiled with CONFIGFILE defined...).
-
-Copyright (C) 1994 by Apostolos Lytras.
-
-## INSTALLATION:
-
-1) Edit the Makefile to match your system.
-2) Check if you have to change anything in 'freeks.h'
-
-
-Note: If your system has _more_ than HASHTABLESIZE users then you _must_ set 
-HASHTABLESIZE to a higher value (preferably a prime) in freeks.h, or
-you will get an error (Hash table full) when you run freeks.
-
-
-3) 'make'
-4) Test-run freeks.
-5) 'make install'
-6) 'make clean'
+3. `make`
+4. Test-run freeks.
+5. `make install`
+6. `make clean`
 
 ## Portability
 
-This has been run and tested on the following systems:
-Machine Type     Operating System        Compiler
-Decsystem 5200   Ultrix 4.0              gcc 2.2.2
-Nextstation m68k Nextstep 3.2            cc (Next's Version of gcc 2.2.2)
-Sparcstation 1   SunOS 4.1.3             gcc 2.5.8
-SparcClassic     SunOS 5.3 (Solaris 2.3) gcc 2.5.8
-Intel 486        NetBSD 0.9B             gcc 2.4.5
-Intel x86        BSD/386                 ??
+Tested on:
+
+| Machine Type     | Operating System        | Compiler            |
+|------------------|--------------------------|----------------------|
+| Decsystem 5200   | Ultrix 4.0              | gcc 2.2.2           |
+| Nextstation m68k | Nextstep 3.2            | cc (gcc 2.2.2)      |
+| Sparcstation 1   | SunOS 4.1.3             | gcc 2.5.8           |
+| SparcClassic     | SunOS 5.3 (Solaris 2.3) | gcc 2.5.8           |
+| Intel 486        | NetBSD 0.9B             | gcc 2.4.5           |
+| Intel x86        | BSD/386                 | ??                  |
 
 ## Thanks
 
 Andy Wick, Bruce Schuchardt, Wietse Venema, Terry Kennedy and Mark Delany for their patches and feedback.
+
+Copyright (c) 1994 by Apostolos Lytras.
