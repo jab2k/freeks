@@ -1,0 +1,110 @@
+.TH freeks 6 "July 10, 1994" "Apostolos Lytras" "Freeks 1.33 Manual"
+.SH NAME
+freeks \-  extended login accounting
+.SH SYNOPSIS
+freeks [\-w
+.I wtmp
+] [\-t] [\-c
+.I configfile
+]
+
+.SH DESCRIPTION
+.B Freeks
+produces a report on system usage based on the contents of
+.I wtmp
+and sorted by the actual time different users have spent on the
+system.
+The first few lines contain general information about
+the system. 
+
+
+.SH OPTIONS
+The default for
+.I wtmp
+is "/usr/adm/wtmp".
+You may specify an alternate
+.I wtmp
+file on the command line.
+
+With the 't' option the user statistics are modified, showing the
+\'rank\', the name, the time the user was actually logged in and
+the number of logins. 
+
+With the \'c\' option you can specify a 
+.I configfile 
+containing the names of alternative 'shutdown' users (cf. TODO), which
+is probably interesting to SysV machine owners only.
+
+.SH BUGS
+.B Freeks
+is (almost) limited to BSD style
+.I wtmp
+files (cf. TODO below). It does not have a lot of fancy options. 
+Freeks does make some mistakes, e.g. when a reboot entry in
+.I wtmp
+happened without a shutdown before it. If the last entry happened more
+than a day before the reboot entry, freeks presumes that the machine
+crashed, and will use the time of the last entry before the crash as
+time of shutdown. This may lead to marginal errors in 'uptime' and the
+login times of users still logged in at that time.
+
+Another bug happens when time is changed in single user mode which
+means it doesn't get logged. Don't do that, or delete the
+.I wtmp
+file afterwards.
+
+.SH TODO
+System V has changed a lot in
+.I wtmp
+but it should be possible to run the program, if you rarely shut
+your machine down or have a dedicated 'shutdown' user that logs in
+when you shut down. If this user is called 'shutdown' you needn't 
+do nothing, if his login name is something else, you can specify that in
+.I configfile
+(if, of course, freeks had been compiled with CONFIGFILE defined...).
+
+
+.SH "SEE ALSO"
+.BR geeks(5)
+.BR geeks(6)
+.BR ac(8)
+.BR wtmp(5)
+.BR wtmpfix(8)
+.BR login(1)
+.BR init(8)
+
+.SH FILES
+.PD 0
+.TP 20
+.B /usr/adm/wtmp
+wtmp file
+
+.SH AUTHOR
+Copyright (C) 1994 by Apostolos Lytras.
+
+Thanks to Dave P. Gymer and everyone that helped
+him write geeks(6). It has been an important inspiration and a reason
+to write this program (because it was just too slow, geeks! ;-).
+
+Thanks also to Wietse Venema for his information on SVR4's wtmp.
+
+Some of the credit must also go to the University of California,
+Berkeley, for their programs ac(8), last(1) and uptime(1), which
+evaluate /usr/adm/wtmp as well. These programs were inspiring as well,
+because they couldn't do everything real geeks needed them to.
+
+This is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+The GNU General Public License is not included in the original
+distrubution of freeks. If you don't have a copy of it already, write
+to the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139,
+USA.
+
+This program is distributed in the hope that  it  will  be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS  FOR  A  PARTICULAR PURPOSE.   See  the
+GNU  General  Public License for more details.
+
